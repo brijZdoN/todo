@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:todo/helpers/drawer_navigation.dart';
 
 class HomeScreen extends StatefulWidget
 {
@@ -17,6 +18,7 @@ class HomeScreen extends StatefulWidget
       appBar:AppBar(
         title:Text("Todo")
       ),
+      drawer: DrawerNavigation(),
     );
   }
 }

@@ -5,5 +5,5 @@ void main()
 {
   runApp(
     App()
-  )
+  );
 }
