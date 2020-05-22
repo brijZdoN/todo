@@ -8,6 +8,9 @@ class App extends StatelessWidget
     
     return MaterialApp(
       home: HomeScreen(),
+      theme: ThemeData(
+        primarySwatch:Colors.red,
+      ),
     );
   }
   

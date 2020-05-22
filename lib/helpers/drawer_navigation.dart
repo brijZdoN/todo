@@ -34,7 +34,7 @@ class _DrawerNavigationState extends State<DrawerNavigation>
                 title:Text("Home") ,
                 leading: Icon(Icons.home),
                 onTap: (){
-                  Navigator.of(context).push(new MaterialPageRoute(builder:(context) =>new HomeScreen()));
+                  Navigator.of(context).pushReplacement(new MaterialPageRoute(builder:(context) =>new HomeScreen()));
                 },
             ),
             ListTile(
