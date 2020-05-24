@@ -17,6 +17,9 @@ class _CategoriesScreenState extends State<CategoriesScreen>
   var _categoryService = CategoryService();
   List<Category> _categoryList = List<Category>();
 
+  var _editCategoryName = TextEditingController();
+  var _editCategoryDescription = TextEditingController();
+
   @override
   void initState()
   {
@@ -32,6 +35,8 @@ class _CategoriesScreenState extends State<CategoriesScreen>
       setState(() {
         var model = Category();
         model.name = category['name'];
+        model.description = category['description'];
+        model.id = category['id'];
         _categoryList.add(model);
       });
 
@@ -39,14 +44,14 @@ class _CategoriesScreenState extends State<CategoriesScreen>
 
     });
   }
-  _showDialog(BuildContext context)
+  _showFormInDialog(BuildContext context)
   {
     return showDialog(context: context, barrierDismissible: true ,builder:(param){
       return AlertDialog(
         actions: <Widget>[
           FlatButton(
             onPressed: (){
-
+                Navigator.pop(context);
             },
             child: Text("Cancel"),
 
@@ -56,7 +61,10 @@ class _CategoriesScreenState extends State<CategoriesScreen>
              _category.name = _categoryName.text;
              _category.description = _categoryDescription.text;
             var result = await _categoryService.saveCategory(_category);
-            print(result);
+            if(result>0)
+              {
+                Navigator.pop(context);
+              }
 
              },
 
@@ -84,7 +92,67 @@ class _CategoriesScreenState extends State<CategoriesScreen>
         ),
       ),);
     });
+
+
   }
+  _editFormInDialog(BuildContext context) {
+    return showDialog(
+        context: context, barrierDismissible: true, builder: (param) {
+      return AlertDialog(
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Cancel"),
+
+          ),
+          FlatButton(
+            onPressed: () async {
+              _category.name = _categoryName.text;
+              _category.description = _categoryDescription.text;
+              var result = await _categoryService.saveCategory(_category);
+              if(result>0)
+                {
+                  Navigator.pop(context);
+                }
+            },
+
+            child: Text("Save"),
+          )
+        ],
+        title: Text("Category Edit form"), content: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            TextField(
+              controller: _editCategoryName,
+              decoration: InputDecoration(
+                  labelText: "Category Name",
+                  hintText: "Write Category Name"
+              ),
+            ),
+            TextField(
+              controller: _editCategoryDescription,
+              decoration: InputDecoration(
+                  labelText: "Category Description",
+                  hintText: "Write Category Description"
+              ),
+            )
+          ],
+        ),
+      ),);
+    });
+  }
+  _editCategory(BuildContext context ,categoryId) async {
+    var category = await _categoryService.getCategoryById(categoryId);
+    setState(() {
+      _editCategoryName.text = category[0]['name'];
+      _editCategoryDescription.text = category[0]['description'];
+    });
+    _editFormInDialog(context);
+  }
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +173,9 @@ class _CategoriesScreenState extends State<CategoriesScreen>
             return Column(
                 children: <Widget>[
                   Card(child:ListTile(
-                    leading: IconButton(icon: Icon(Icons.edit), onPressed: (){}),
+                    leading: IconButton(icon: Icon(Icons.edit), onPressed: (){
+                      _editCategory(context, _categoryList[index].id);
+                    }),
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -118,7 +188,7 @@ class _CategoriesScreenState extends State<CategoriesScreen>
           } ),
         ),
         floatingActionButton: FloatingActionButton(onPressed: (){
-          _showDialog(context);
+          _showFormInDialog(context);
         },child: Icon(Icons.add),),
     );
   }
