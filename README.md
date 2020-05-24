@@ -1,6 +1,6 @@
 # todo
 
-A new Flutter project.
+It is a Flutter app with Sqlite Database .
 
 ## Getting Started
 
