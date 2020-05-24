@@ -1,11 +1,16 @@
 
  import 'package:todo/models/category.dart';
+import 'package:todo/repositories/repository.dart';
 
 class CategoryService
  {
-   saveCategory(Category category)
+   Repository _repository;
+
+   CategoryService()
    {
-     print(category.name);
-     print(category.description);
+     _repository = Repository();
+   }
+   saveCategory(Category category) async {
+     return await _repository.save('categories', category.categoryMap());
    }
  }
