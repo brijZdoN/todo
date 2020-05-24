@@ -15,6 +15,7 @@ class _CategoriesScreenState extends State<CategoriesScreen>
 
   var _category = Category();
   var _categoryService = CategoryService();
+  List<Widget> _categoryList = List<Widget>();
 
   @override
   void initState()
@@ -27,7 +28,15 @@ class _CategoriesScreenState extends State<CategoriesScreen>
     var categories = await _categoryService.getCategories();
     categories.forEach((category)
     {
-      print(category['name']);
+      _categoryList.add(Card(child:ListTile(
+        leading: IconButton(icon: Icon(Icons.edit), onPressed: (){}),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(category['name']),
+            IconButton(icon: Icon(Icons.delete),onPressed: (){},)
+          ],
+        ),)));
     });
   }
   _showDialog(BuildContext context)
@@ -88,9 +97,11 @@ class _CategoriesScreenState extends State<CategoriesScreen>
             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
           }  ,
         ),
-        title:Text("Categories SCreen")
+        title:Text("Categories Screen")
         ),
-        body: Center(child:Text("Welcome to Categories Screen ")),
+        body: Column(
+          children: _categoryList,
+        ),
         floatingActionButton: FloatingActionButton(onPressed: (){
           _showDialog(context);
         },child: Icon(Icons.add),),
