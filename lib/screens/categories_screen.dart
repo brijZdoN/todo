@@ -26,7 +26,7 @@ class _CategoriesScreenState extends State<CategoriesScreen>
     super.initState();
     getAllCategories();
   }
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   getAllCategories() async {
     var categories = await _categoryService.getCategories();
     categories.forEach((category)
@@ -63,8 +63,12 @@ class _CategoriesScreenState extends State<CategoriesScreen>
             var result = await _categoryService.saveCategory(_category);
             if(result>0)
               {
+                _categoryList.clear();
+                getAllCategories();
                 Navigator.pop(context);
+
               }
+
 
              },
 
@@ -115,10 +119,12 @@ class _CategoriesScreenState extends State<CategoriesScreen>
               if(result>0)
                 {
                   Navigator.pop(context);
+                  _showSnackBarMessage(Text("Successfully Updated"));
+
                 }
             },
 
-            child: Text("Save"),
+            child: Text("Update"),
           )
         ],
         title: Text("Category Edit form"), content: SingleChildScrollView(
@@ -151,18 +157,28 @@ class _CategoriesScreenState extends State<CategoriesScreen>
     });
     _editFormInDialog(context);
   }
+  //snackBar on successfully update message
+  _showSnackBarMessage(message)
+  {
+    var _snackBar = SnackBar(
+      content: message,
+      backgroundColor: Colors.red,
+    );
+    _scaffoldKey.currentState.showSnackBar(_snackBar);
+  }
 
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         leading: RaisedButton(
           elevation: 0.0,
           color: Colors.red,
           child: Icon(Icons.arrow_back,color: Colors.white,),
           onPressed: (){
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
+            Navigator.pop(context);
           }  ,
         ),
         title:Text("Categories Screen")
@@ -180,7 +196,12 @@ class _CategoriesScreenState extends State<CategoriesScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(_categoryList[index].name),
-                        IconButton(icon: Icon(Icons.delete),onPressed: (){},)
+                        IconButton(icon: Icon(Icons.delete),onPressed:
+                            ()
+                        {
+                          _categoryList.removeAt(index);
+
+                        },)
                       ],
                     ),))
                 ],
