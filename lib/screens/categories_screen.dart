@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:todo/models/category.dart';
-import 'package:todo/screens/home_screen.dart';
 import 'package:todo/services/category_service.dart';
 class CategoriesScreen extends StatefulWidget {
 
@@ -29,6 +28,7 @@ class _CategoriesScreenState extends State<CategoriesScreen>
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   getAllCategories() async {
     var categories = await _categoryService.getCategories();
+
     categories.forEach((category)
     {
 
@@ -39,9 +39,6 @@ class _CategoriesScreenState extends State<CategoriesScreen>
         model.id = category['id'];
         _categoryList.add(model);
       });
-
-
-
     });
   }
   _showFormInDialog(BuildContext context)
@@ -63,13 +60,13 @@ class _CategoriesScreenState extends State<CategoriesScreen>
             var result = await _categoryService.saveCategory(_category);
             if(result>0)
               {
+                
+              
+                Navigator.pop(context);
                 _categoryList.clear();
                 getAllCategories();
-                Navigator.pop(context);
 
               }
-
-
              },
 
             child: Text("Save"),
@@ -99,7 +96,8 @@ class _CategoriesScreenState extends State<CategoriesScreen>
 
 
   }
-  _editFormInDialog(BuildContext context) {
+  _editFormInDialog(BuildContext context)
+   {
     return showDialog(
         context: context, barrierDismissible: true, builder: (param) {
       return AlertDialog(
@@ -119,6 +117,8 @@ class _CategoriesScreenState extends State<CategoriesScreen>
               if(result>0)
                 {
                   Navigator.pop(context);
+                  _categoryList.clear();
+                  getAllCategories();
                   _showSnackBarMessage(Text("Successfully Updated"));
 
                 }
@@ -149,7 +149,8 @@ class _CategoriesScreenState extends State<CategoriesScreen>
       ),);
     });
   }
-  _editCategory(BuildContext context ,categoryId) async {
+  _editCategory(BuildContext context ,categoryId) async 
+  {
     var category = await _categoryService.getCategoryById(categoryId);
     setState(() {
       _editCategoryName.text = category[0]['name'];
@@ -168,6 +169,40 @@ class _CategoriesScreenState extends State<CategoriesScreen>
   }
 
   
+
+  //deleteDialog
+
+   _deleteFormInDialog(BuildContext context,categoryId) 
+   {
+    return showDialog(
+        context: context, barrierDismissible: true, builder: (param) {
+      return AlertDialog(
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            color: Colors.green,
+            child: Text("Cancel",style: TextStyle(color:Colors.white),),
+
+          ),
+          FlatButton(
+            onPressed: () async 
+            {
+             _categoryService.deleteCategory(categoryId); 
+             Navigator.pop(context);
+             _categoryList.clear();
+             getAllCategories();
+             _showSnackBarMessage(Text("Data Successfully deleted"));
+            },
+            color: Colors.red,
+            child: Text("Delete",style: TextStyle(color:Colors.white),),
+          )
+        ],
+        title: Text("Are you sure,you want to delete "), 
+        );
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,13 +220,14 @@ class _CategoriesScreenState extends State<CategoriesScreen>
         ),
         body: ListView(
           scrollDirection: Axis.vertical,
-          children: List.generate(_categoryList.length, (index){
+          children: List.generate(_categoryList.length,(index){
             return Column(
                 children: <Widget>[
                   Card(child:ListTile(
                     leading: IconButton(icon: Icon(Icons.edit), onPressed: (){
                       _editCategory(context, _categoryList[index].id);
                     }),
+
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -199,7 +235,8 @@ class _CategoriesScreenState extends State<CategoriesScreen>
                         IconButton(icon: Icon(Icons.delete),onPressed:
                             ()
                         {
-                          _categoryList.removeAt(index);
+                         
+                         _deleteFormInDialog(context,_categoryList[index].id);
 
                         },)
                       ],

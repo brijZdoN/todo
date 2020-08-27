@@ -41,7 +41,7 @@ class _DrawerNavigationState extends State<DrawerNavigation>
                 title:Text("Categories") ,
                 leading: Icon(Icons.view_list),
                 onTap: (){
-                  Navigator.of(context).pushReplacement(new MaterialPageRoute(builder:(context) =>new CategoriesScreen()));
+                  Navigator.of(context).push(new MaterialPageRoute(builder:(context) =>new CategoriesScreen()));
                 },
             ),
           ],

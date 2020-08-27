@@ -31,4 +31,10 @@ class Repository
     return await conn.query(table , where: 'id=?' ,whereArgs: [itemId]);
   }
 
+  delete(String table, itemId) async 
+  {
+    var conn =await database;
+    return await conn.rawDelete("DELETE FROM $table WHERE id=$itemId");
+  }
+
 }

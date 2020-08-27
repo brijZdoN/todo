@@ -20,4 +20,11 @@ class CategoryService
    getCategoryById(categoryId) async{
      return await _repository.getById('categories' , categoryId);
    }
+
+  void deleteCategory(categoryId) async
+  {
+    return await _repository.delete('categories',categoryId);
+  }
+
+  
  }
